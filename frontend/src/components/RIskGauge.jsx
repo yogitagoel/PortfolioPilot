@@ -1,116 +1,124 @@
-import { useEffect, useState } from 'react';
-import { riskColor } from '../utils/format';
-import './RiskGauge.css';
 
-const LABEL_COLORS = {
-  LOW:      '#10b981',
-  MODERATE: '#f59e0b',
-  HIGH:     '#ef4444',
-  EXTREME:  '#ef4444',
-};
+import { useEffect, useRef, useState } from "react";
 
-export default function RiskGauge({ score, label }) {
-  const [animated, setAnimated] = useState(0);
+export default function RiskGauge({ score = 0, label = "UNKNOWN", size = 180 }) {
+  const [displayed, setDisplayed] = useState(0);
 
+  // Animate score on mount / change
   useEffect(() => {
-    if (score == null) { setAnimated(0); return; }
-    const target = Math.min(100, Math.max(0, score));
-    let current = animated;
-    const step = (target - current) / 40;
-    const t = setInterval(() => {
-      current += step;
-      if ((step > 0 && current >= target) || (step < 0 && current <= target)) {
-        current = target;
-        clearInterval(t);
-      }
-      setAnimated(current);
+    const target = Math.max(0, Math.min(100, score));
+    const step   = target / 40;
+    let cur = 0;
+    const id = setInterval(() => {
+      cur = Math.min(cur + step, target);
+      setDisplayed(cur);
+      if (cur >= target) clearInterval(id);
     }, 16);
-    return () => clearInterval(t);
+    return () => clearInterval(id);
   }, [score]);
 
-  const r   = 68;
-  const cx  = 90;
-  const cy  = 88;
-  const circ = Math.PI * r;          // half-circle arc length
-  const pct  = animated / 100;
-  const dashOffset = circ * (1 - pct);
-  const color = LABEL_COLORS[label] || '#4a5a6a';
+  const CX = size / 2, CY = size / 2 + 8;
+  const R  = size * 0.36;
 
-  // Needle: -180deg at 0, 0deg at 100
-  const needleAngle = -180 + (animated / 100) * 180;
-  const rad = (needleAngle * Math.PI) / 180;
-  const nx  = cx + (r - 10) * Math.cos(rad);
-  const ny  = cy + (r - 10) * Math.sin(rad);
+  // Arc goes from 210° to 330° (300° sweep)
+  function polar(deg, r = R) {
+    const rad = ((deg - 90) * Math.PI) / 180;
+    return { x: CX + r * Math.cos(rad), y: CY + r * Math.sin(rad) };
+  }
+  function arcD(from, to, r = R) {
+    const f = polar(from, r), t = polar(to, r);
+    const large = (to - from) > 180 ? 1 : 0;
+    return `M${f.x},${f.y} A${r},${r} 0 ${large} 1 ${t.x},${t.y}`;
+  }
+
+  const clamp = Math.max(0, Math.min(100, displayed));
+  const fillEnd = 210 + (clamp / 100) * 300;
+  const color =
+    clamp >= 75 ? "var(--red)"   :
+    clamp >= 50 ? "var(--amber)" :
+    clamp >= 25 ? "var(--cyan)"  :
+    "var(--green)";
+
+  // Gradient zones in track
+  const zones = [
+    { from:210, to:285, c:"var(--green)" },
+    { from:285, to:360, c:"var(--cyan)"  },
+    { from:360, to:435, c:"var(--amber)" },
+    { from:435, to:510, c:"var(--red)"   },
+  ];
+
+  // Needle
+  const needleRad = ((fillEnd - 90) * Math.PI) / 180;
+  const needleTip = {
+    x: CX + (R - 10) * Math.cos(needleRad),
+    y: CY + (R - 10) * Math.sin(needleRad),
+  };
+
+  const labelColor =
+    label === "EXTREME"  ? "var(--red)"   :
+    label === "HIGH"     ? "var(--amber)" :
+    label === "MODERATE" ? "var(--cyan)"  :
+    "var(--green)";
 
   return (
-    <div className="gauge-wrap">
-      <svg width="180" height="108" viewBox="0 0 180 108">
+    <div style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:6 }}>
+      <svg viewBox={`0 0 ${size} ${size - 10}`} style={{ width:size, overflow:"visible" }}>
+        <defs>
+          <filter id="glow">
+            <feGaussianBlur stdDeviation="2" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+
         {/* Background track */}
-        <path
-          d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
-          fill="none"
-          stroke="#1e2a3a"
-          strokeWidth="12"
-          strokeLinecap="round"
-        />
+        <path d={arcD(210,510)} fill="none" stroke="var(--bg-3)" strokeWidth={8} strokeLinecap="round"/>
 
-        {/* Coloured fill arc */}
-        <path
-          d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`}
-          fill="none"
-          stroke={color}
-          strokeWidth="12"
-          strokeLinecap="round"
-          strokeDasharray={circ}
-          strokeDashoffset={dashOffset}
-          style={{
-            filter: `drop-shadow(0 0 5px ${color}88)`,
-            transition: 'stroke 0.4s ease',
-          }}
-        />
+        {/* Zone colouring (subtle) */}
+        {zones.map((z,i) => (
+          <path key={i} d={arcD(z.from,z.to)} fill="none"
+            stroke={z.c} strokeWidth={8} strokeLinecap="round" opacity={.15}/>
+        ))}
 
-        {/* Zone tick marks at 25 / 50 / 75 */}
-        {[25, 50, 75].map((t) => {
-          const a   = (-180 + (t / 100) * 180) * (Math.PI / 180);
-          const x1  = cx + (r - 18) * Math.cos(a);
-          const y1  = cy + (r - 18) * Math.sin(a);
-          const x2  = cx + (r + 5)  * Math.cos(a);
-          const y2  = cy + (r + 5)  * Math.sin(a);
-          return (
-            <line key={t} x1={x1} y1={y1} x2={x2} y2={y2}
-              stroke="#2a3a50" strokeWidth="1.5" />
-          );
+        {/* Fill arc */}
+        {clamp > 0 && (
+          <path d={arcD(210, fillEnd)} fill="none"
+            stroke={color} strokeWidth={8} strokeLinecap="round"
+            filter="url(#glow)"
+            style={{ transition:"d .05s linear" }}
+          />
+        )}
+
+        {/* Tick marks */}
+        {[0,25,50,75,100].map(pct => {
+          const deg = 210 + (pct/100)*300;
+          const a = polar(deg, R - 6), b = polar(deg, R + 4);
+          return <line key={pct} x1={a.x} y1={a.y} x2={b.x} y2={b.y}
+            stroke="var(--bg-3)" strokeWidth={pct%50===0 ? 2 : 1}/>;
         })}
 
         {/* Needle */}
-        {score != null && (
-          <>
-            <line
-              x1={cx} y1={cy} x2={nx} y2={ny}
-              stroke={color}
-              strokeWidth="2"
-              strokeLinecap="round"
-              style={{
-                filter: `drop-shadow(0 0 3px ${color})`,
-                transition: 'all 0.05s linear',
-              }}
-            />
-            <circle cx={cx} cy={cy} r="5" fill={color}
-              style={{ filter: `drop-shadow(0 0 4px ${color})` }} />
-            <circle cx={cx} cy={cy} r="3" fill="#0a0c0f" />
-          </>
-        )}
+        <line x1={CX} y1={CY} x2={needleTip.x} y2={needleTip.y}
+          stroke={color} strokeWidth={1.5} strokeLinecap="round"/>
+        <circle cx={CX} cy={CY} r={4} fill={color} opacity={.9}/>
 
-        {/* Zone labels */}
-        <text x="21"  y={cy + 18} fontSize="8" fill="#4a5a6a" fontFamily="IBM Plex Mono">LOW</text>
-        <text x="156" y={cy + 18} fontSize="8" fill="#4a5a6a" fontFamily="IBM Plex Mono" textAnchor="end">EXT</text>
+        {/* Score */}
+        <text x={CX} y={CY + 24} textAnchor="middle"
+          fill={color} fontSize={26} fontWeight={700}
+          fontFamily="var(--font-mono)" letterSpacing="-.02em">
+          {Math.round(clamp)}
+        </text>
+        <text x={CX} y={CY + 36} textAnchor="middle"
+          fill="var(--text-3)" fontSize={8} fontFamily="var(--font-mono)">
+          / 100
+        </text>
       </svg>
 
-      <div className="gauge-score" style={{ color: score != null ? color : '#4a5a6a' }}>
-        {score != null ? animated.toFixed(1) : '—'}
-      </div>
-      <div className={`gauge-label ${riskColor(label)}`}>
-        {label || 'AWAITING ANALYSIS'}
+      <div style={{
+        fontSize:12, fontWeight:700, letterSpacing:".12em",
+        color:labelColor, textTransform:"uppercase",
+        fontFamily:"var(--font-mono)",
+      }}>
+        {label}
       </div>
     </div>
   );
