@@ -28,10 +28,6 @@ _VOL_SPIKE_FACTOR = 1.30   # 30% increase in predicted vs current vol
 
 
 class RecommendationEngine:
-    """
-    Stateless recommendation generator.
-    Call `generate(...)` once per user analysis request.
-    """
 
     def __init__(self):
         self.scorer = RiskScorer()
@@ -45,9 +41,7 @@ class RecommendationEngine:
         risk_score:     RiskScore,
         snapshots:      dict[str, MarketSnapshot],
     ) -> RecommendationOutput:
-        """
-        Generate per-asset recommendations and a portfolio-level summary.
-        """
+        
         preference = portfolio.risk_preference
         pref_adj   = self.scorer.effective_threshold(0, preference)
         alerts: list[str] = []
@@ -110,7 +104,7 @@ class RecommendationEngine:
             if pred and snap:
                 if pred.predicted_volatility > snap.rolling_vol_20d * _VOL_SPIKE_FACTOR:
                     alerts.append(
-                        f"📈 {sym}: Volatility spike expected "
+                        f"{sym}: Volatility spike expected "
                         f"(predicted {pred.predicted_volatility:.1%} vs "
                         f"current {snap.rolling_vol_20d:.1%})"
                     )
@@ -204,7 +198,7 @@ class RecommendationEngine:
                 target_weight=current_weight,
             )
 
-        # Case 4: Opportunity — bullish + moderate risk
+        # Case 4: Opportunity(bullish)
         if (
             risk_score.score < effective_high
             and pred_ret > _RETURN_BULLISH_THRESHOLD
