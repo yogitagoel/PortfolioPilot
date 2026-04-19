@@ -19,6 +19,10 @@ class Settings(BaseSettings):
     risk_free_rate: float = Field(default=0.05, alias="RISK_FREE_RATE")
     var_confidence: float = Field(default=0.95, alias="VAR_CONFIDENCE")
 
+    #Scheduler
+    market_update_interval: int = Field(default=300,  alias="MARKET_UPDATE_INTERVAL")
+    user_recalc_interval:   int = Field(default=120,  alias="USER_RECALC_INTERVAL")
+
     # ML
     model_dir: str = Field(default="./backend/data/models", alias="MODEL_DIR")
     
