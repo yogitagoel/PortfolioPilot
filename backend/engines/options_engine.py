@@ -7,7 +7,7 @@ import numpy as np
 from scipy.stats import norm
 
 from backend.config         import get_settings
-from backend.models.schemas import (OptionContract, OptionType, OptionStyle, MarketSnapshot, OptionGreeks, PortfolioGreeks)
+from backend.models.schemas import (OptionContract, OptionType, OptionStyle, PositionSide, MarketSnapshot, OptionGreeks, PortfolioGreeks)
 
 def _bs_d1_d2(
     S: float,   # current underlying price
@@ -145,7 +145,7 @@ def _binomial_greeks(S: float, K: float, T: float, r: float, sigma: float, optio
     delta = (p_up - p_down) / (2 * dS)
     gamma = (p_up - 2 * price + p_down) / (dS ** 2)
     theta = (p_time - price)   # per day 
-    vega  = (p_vol_up - price) / 100   # per 1% IV
+    vega  = (p_vol_up - price)   # per 1% IV
     rho   = (p_rho_up - price) / 100   # per 1% rate
 
     return {
