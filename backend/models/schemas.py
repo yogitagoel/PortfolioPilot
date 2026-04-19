@@ -8,6 +8,12 @@ class RiskPreference(str, Enum):
     MEDIUM = "medium"
     HIGH   = "high"
 
+class ActionType(str, Enum):
+    BUY   = "BUY"
+    SELL  = "SELL"
+    HOLD  = "HOLD"
+    HEDGE = "HEDGE"
+
 class OptionType(str, Enum):
     CALL = "CALL"
     PUT  = "PUT"
@@ -202,3 +208,40 @@ class MLPrediction(BaseModel):
     predicted_return:     float
     predicted_volatility: float
     confidence:           float
+
+
+class RiskScore(BaseModel):
+    score:               float = Field(..., ge=0, le=100)
+    label:               str
+    vol_contribution:    float
+    var_contribution:    float
+    sharpe_contribution: float
+    rationale:           str
+
+class Recommendation(BaseModel):
+    action:        ActionType
+    symbol:        str
+    confidence:    float = Field(..., ge=0, le=1)
+    reason:        str
+    target_weight: Optional[float] = None
+
+
+class RecommendationOutput(BaseModel):
+    portfolio_id:    str
+    timestamp:       str
+    risk_score:      RiskScore
+    recommendations: list[Recommendation]
+    summary:         str
+    alerts:          list[str] = []
+
+class PortfolioAnalysisResponse(BaseModel):
+    input:                   PortfolioInput
+    risk_metrics:            RiskEngineOutput
+    predictions:             list[MLPrediction]
+    risk_score:              RiskScore
+    recommendations:         list[Recommendation]
+    option_greeks_breakdown: list[OptionGreeks] = Field(default_factory=list)
+    summary:                 str
+    alerts:                  list[str] = []
+    processing_time_ms:      float
+
