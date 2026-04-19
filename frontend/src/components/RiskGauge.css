@@ -1,0 +1,24 @@
+.gauge-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 0 6px;
+}
+
+.gauge-score {
+  font-size: 38px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  letter-spacing: -1px;
+  line-height: 1;
+  margin-top: -4px;
+  transition: color 0.4s;
+}
+
+.gauge-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  margin-top: 2px;
+}
