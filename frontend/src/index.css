@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap');
+
+/* Design Tokens */
+:root {
+  --bg:          #060a10;
+  --bg-1:        #0b1420;
+  --bg-2:        #101d2e;
+  --bg-3:        #152438;
+
+  --border:      rgba(0,180,216,.12);
+  --border-2:    rgba(0,180,216,.06);
+
+  --text:        #dde8f4;
+  --text-2:      #7a96b2;
+  --text-3:      #3d5870;
+
+  --cyan:        #00b4d8;
+  --cyan-dim:    rgba(0,180,216,.12);
+  --green:       #0cce6b;
+  --green-dim:   rgba(12,206,107,.1);
+  --amber:       #f5a623;
+  --amber-dim:   rgba(245,166,35,.1);
+  --red:         #ff3d57;
+  --red-dim:     rgba(255,61,87,.1);
+  --purple:      #a78bfa;
+  --blue:        #3b82f6;
+
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-ui:   'DM Sans', -apple-system, sans-serif;
+
+  --r:   6px;
+  --r-2: 10px;
+  --r-3: 14px;
+
+  /* Aliases used by PortfolioForm and ChartsPanel CSS */
+  --bg-panel:        #0b1420;
+  --bg-card:         #0b1420;
+  --bg-glass-light:  #101d2e;
+  --bg-hover:        #152438;
+  --border-bright:   rgba(0,180,216,.28);
+  --text-primary:    #dde8f4;
+  --text-secondary:  #7a96b2;
+  --text-dim:        #3d5870;
+  --text-xs:         11px;
+  --radius-sm:       6px;
+  --radius-md:       10px;
+  --radius-lg:       12px;
+  --transition-fast: 100ms ease;
+  --transition-base: 180ms ease;
+}
+
+/* Reset */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 18px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-ui);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg-3); border-radius: 2px; }
+
+/* Typography */
+.mono { font-family: var(--font-mono); }
+
+/* Scanline overlay */
+body::after {
+  content: '';
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,.04) 2px,
+    rgba(0,0,0,.04) 4px
+  );
+  z-index: 9999;
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+@keyframes pulse-border {
+  0%,100% { border-color: var(--border); }
+  50%     { border-color: var(--cyan); }
+}
+@keyframes blink {
+  0%,100% { opacity:1; }
+  50%     { opacity:0; }
+}
+.anim-fade-up { animation: fadeUp .35s ease both; }
+
+/* Base elements */
+button { cursor: pointer; font-family: var(--font-ui); border: none; outline: none; }
+input, select { font-family: var(--font-ui); outline: none; }
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Recharts — disable white hover/active artifact */
+.recharts-active-bar { opacity: 0.9 !important; }
+.recharts-pie-sector path:focus { outline: none; }
+.recharts-surface:focus { outline: none; }
