@@ -1,0 +1,83 @@
+{
+  "users": [
+    {
+      "id": "29e96fc5-a5ec-49fe-9f44-0f2a3d53655f",
+      "username": "abc",
+      "password": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5"
+    }
+  ],
+  "history": {
+    "29e96fc5-a5ec-49fe-9f44-0f2a3d53655f": [
+      {
+        "id": "ab65e4a9-afba-412f-8886-76ca5fb98157",
+        "timestamp": 1776691524.7009356,
+        "portfolio": {
+          "equities": [
+            {
+              "symbol": "AAPL",
+              "qty": 100
+            }
+          ],
+          "options": [],
+          "risk_preference": "medium"
+        },
+        "summary": {
+          "compositeRiskScore": 23,
+          "riskLabel": "LOW",
+          "summary": "Risk LOW (23/100). 1 BUY signal. Key driver: Portfolio volatility is low at 1%.",
+          "var95": 0.023013,
+          "sharpe": 1.216,
+          "volatility": 0.014801
+        }
+      },
+      {
+        "id": "e37e445f-8d11-46e4-829d-55144194cd42",
+        "timestamp": 1776691509.0899851,
+        "portfolio": {
+          "equities": [
+            {
+              "symbol": "AAPL",
+              "qty": 100
+            },
+            {
+              "symbol": "META",
+              "qty": 200
+            }
+          ],
+          "options": [],
+          "risk_preference": "medium"
+        },
+        "summary": {
+          "compositeRiskScore": 28,
+          "riskLabel": "MODERATE",
+          "summary": "Risk MODERATE (28/100). 1 BUY signal. Key driver: Portfolio volatility is low at 2%.",
+          "var95": 0.030685,
+          "sharpe": 0.8829,
+          "volatility": 0.019433
+        }
+      },
+      {
+        "id": "07877a4b-213c-4852-bcaa-c1f6adaf3816",
+        "timestamp": 1776691499.363764,
+        "portfolio": {
+          "equities": [
+            {
+              "symbol": "AAPL",
+              "qty": 100
+            }
+          ],
+          "options": [],
+          "risk_preference": "medium"
+        },
+        "summary": {
+          "compositeRiskScore": 23,
+          "riskLabel": "LOW",
+          "summary": "Risk LOW (23/100). 1 BUY signal. Key driver: Portfolio volatility is low at 1%.",
+          "var95": 0.023013,
+          "sharpe": 1.216,
+          "volatility": 0.014801
+        }
+      }
+    ]
+  }
+}

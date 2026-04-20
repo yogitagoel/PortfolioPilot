@@ -12,7 +12,7 @@ DATA_FILE = Path(__file__).parent / "data" / "users.json"
 
 def _load() -> dict:
     if not DATA_FILE.exists():
-        return {"users": {}, "history": {}}
+        return {"users": [], "history": {}}   # ← [] not {}
     with open(DATA_FILE, "r") as f:
         return json.load(f)
 
@@ -31,14 +31,14 @@ def _hash_password(pw: str) -> str:
 
 def register_user(username: str, password: str) -> tuple[dict | None, str | None]:
     data = _load()
-    if username in data["users"]:
+    if any(u["username"] == username for u in data["users"]):
         return None, "Username already taken"
     user_id = str(uuid.uuid4())
-    data["users"][username] = {
+    data["users"].append({
         "id": user_id,
-        "password": _hash_password(password),
-        "created": time.time(),
-    }
+        "username": username,
+        "password": _hash_password(password)
+    })
     data["history"][user_id] = []
     _save(data)
     return {"id": user_id, "username": username}, None
@@ -46,14 +46,13 @@ def register_user(username: str, password: str) -> tuple[dict | None, str | None
 
 def login_user(username: str, password: str) -> tuple[dict | None, str | None]:
     data = _load()
-    user = data["users"].get(username)
+    user = next((u for u in data["users"] if u["username"] == username), None)
     if not user or user["password"] != _hash_password(password):
         return None, "Invalid username or password"
-    return {"id": user["id"], "username": username}, None
-
+    return {"id": user["id"], "username": user["username"]}, None 
 
 # History
-def save_analysis(user_id: str, portfolio: dict, result_summary: dict) -> dict:
+def save_analysis(user_id: str, portfolio: dict, summary: str) -> dict:
     data = _load()
     if user_id not in data["history"]:
         data["history"][user_id] = []
@@ -62,7 +61,7 @@ def save_analysis(user_id: str, portfolio: dict, result_summary: dict) -> dict:
         "id": str(uuid.uuid4()),
         "timestamp": time.time(),
         "portfolio": portfolio,
-        "summary": result_summary,
+        "summary": summary,
     }
     data["history"][user_id].insert(0, entry)
     data["history"][user_id] = data["history"][user_id][:50]

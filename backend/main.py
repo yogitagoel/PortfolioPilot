@@ -93,9 +93,7 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
     )
 
-    origins = ["*"] if settings.app_env == "development" else [
-        "https://portfoliopilot.yourdomain.com"
-    ]
+    origins = ["http://localhost:5173"]
     app.add_middleware(
         CORSMiddleware,
         allow_origins=origins,
