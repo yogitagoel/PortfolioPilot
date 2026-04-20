@@ -1,0 +1,148 @@
+
+import { useState } from "react";
+
+const inp = {
+  background:"var(--bg-2)", border:"1px solid var(--border)",
+  borderRadius:6, padding:"7px 10px",
+  color:"var(--text)", fontSize:14,
+  width:"100%",
+  transition:"border-color .15s",
+};
+
+export default function PortfolioInput({ onAnalyze, loading }) {
+  const [equities,   setEquities]   = useState([
+    { symbol:"AAPL", qty:10 },
+    { symbol:"MSFT", qty:8  },
+  ]);
+  const [preference, setPreference] = useState("medium");
+  const [sym,        setSym]        = useState("");
+  const [qty,        setQty]        = useState("");
+
+  function add() {
+    const s = sym.trim().toUpperCase();
+    const q = parseFloat(qty);
+    if (!s || !q || q <= 0) return;
+    setEquities(prev => {
+      const exists = prev.findIndex(e => e.symbol === s);
+      if (exists >= 0) {
+        const next = [...prev];
+        next[exists] = { symbol:s, qty:q };
+        return next;
+      }
+      return [...prev, { symbol:s, qty:q }];
+    });
+    setSym(""); setQty("");
+  }
+
+  function remove(i) { setEquities(prev => prev.filter((_,idx)=>idx!==i)); }
+
+  function submit() {
+    if (!equities.length || loading) return;
+    onAnalyze({ equities, options:[], risk_preference: preference });
+  }
+
+  const PREFS = [
+    { val:"low",    label:"Conservative", desc:"Lower thresholds", color:"var(--green)" },
+    { val:"medium", label:"Balanced",     desc:"Standard",         color:"var(--cyan)"  },
+    { val:"high",   label:"Aggressive",   desc:"Higher tolerance", color:"var(--red)"   },
+  ];
+
+  return (
+    <div style={{
+      background:"var(--bg-1)", border:"1px solid var(--border)",
+      borderRadius:10, padding:18, display:"flex", flexDirection:"column", gap:16,
+    }}>
+      <div style={{ fontSize:13, fontWeight:600, letterSpacing:"-.01em" }}>
+        Portfolio
+      </div>
+
+      {/* Holdings */}
+      <div style={{ display:"flex", flexDirection:"column", gap:4 }}>
+        {equities.map((e,i)=>(
+          <div key={i} style={{
+            display:"flex", alignItems:"center", gap:8,
+            background:"var(--bg-2)", borderRadius:6, padding:"6px 10px",
+            fontSize:14,
+          }}>
+            <span style={{ fontFamily:"var(--font-mono)", fontWeight:600,
+              color:"var(--cyan)", minWidth:50 }}>{e.symbol}</span>
+            <span style={{ color:"var(--text-3)", flex:1 }}>{e.qty} sh</span>
+            <button onClick={()=>remove(i)} style={{
+              background:"none", color:"var(--text-3)", fontSize:16,
+              padding:"0 3px", lineHeight:1,
+              transition:"color .1s",
+            }}>×</button>
+          </div>
+        ))}
+      </div>
+
+      {/* Add row */}
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 64px auto", gap:6 }}>
+        <input style={inp} placeholder="SYMBOL"
+          value={sym} onChange={e=>setSym(e.target.value.toUpperCase())}
+          onKeyDown={e=>e.key==="Enter"&&add()}/>
+        <input style={inp} type="number" placeholder="Qty" min="0.01"
+          value={qty} onChange={e=>setQty(e.target.value)}
+          onKeyDown={e=>e.key==="Enter"&&add()}/>
+        <button onClick={add} style={{
+          background:"var(--bg-3)", color:"var(--cyan)",
+          border:"1px solid var(--border)", borderRadius:6,
+          padding:"7px 12px", fontSize:13, fontWeight:600,
+          whiteSpace:"nowrap",
+        }}>+ Add</button>
+      </div>
+
+      {/* Risk preference selector */}
+      <div>
+        <div style={{ fontSize:11, color:"var(--text-3)", textTransform:"uppercase",
+          letterSpacing:".1em", marginBottom:8 }}>
+          Risk Profile
+        </div>
+        <div style={{ display:"flex", flexDirection:"column", gap:5 }}>
+          {PREFS.map(p=>(
+            <button key={p.val} onClick={()=>setPreference(p.val)} style={{
+              background: preference===p.val ? `${p.color}15` : "var(--bg-2)",
+              border: `1px solid ${preference===p.val ? p.color : "var(--border)"}`,
+              borderRadius:7, padding:"8px 12px",
+              display:"flex", alignItems:"center", justifyContent:"space-between",
+              transition:"all .15s",
+            }}>
+              <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                <div style={{
+                  width:7, height:7, borderRadius:"50%",
+                  background: preference===p.val ? p.color : "var(--text-3)",
+                  transition:"background .15s",
+                }}/>
+                <span style={{
+                  fontSize:14, fontWeight:500,
+                  color: preference===p.val ? p.color : "var(--text-2)",
+                }}>
+                  {p.label}
+                </span>
+              </div>
+              <span style={{ fontSize:11, color:"var(--text-3)" }}>{p.desc}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <button onClick={submit} disabled={loading || !equities.length} style={{
+        background: (loading || !equities.length) ? "var(--bg-3)" : "var(--cyan)",
+        color: (loading || !equities.length) ? "var(--text-3)" : "var(--bg)",
+        borderRadius:7, padding:"10px 0",
+        fontSize:14, fontWeight:700, letterSpacing:".04em",
+        transition:"all .15s",
+        display:"flex", alignItems:"center", justifyContent:"center", gap:8,
+      }}>
+        {loading && (
+          <div style={{
+            width:12, height:12, borderRadius:"50%",
+            border:"2px solid var(--bg)", borderTopColor:"transparent",
+            animation:"spin .7s linear infinite",
+          }}/>
+        )}
+        {loading ? "ANALYSING…" : "ANALYSE →"}
+      </button>
+    </div>
+  );
+}
