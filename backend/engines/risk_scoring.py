@@ -12,7 +12,7 @@ from backend.models.schemas import (
 
 
 # Reference Ranges
- VOL_RANGE       = (0.10, 0.80)
+_VOL_RANGE       = (0.10, 0.80)
 _VAR_RANGE       = (-0.12, 0.00)
 _SHARPE_RANGE    = (-1.0,  3.0)
 _PRED_VOL_RANGE  = (0.10, 0.80)

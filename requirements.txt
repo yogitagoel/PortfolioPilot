@@ -1,0 +1,34 @@
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+
+# Data & ML
+numpy
+pandas
+scikit-learn
+xgboost
+scipy
+joblib
+
+# Finance
+yfinance
+ta==0.11.0
+
+# Scheduler
+apscheduler==3.10.4
+
+# HTTP
+httpx==0.27.0
+requests==2.31.0
+
+# Utilities
+python-dotenv==1.0.1
+loguru==0.7.2
+
+# Testing
+pytest==8.2.0
+pytest-asyncio==0.23.6
+httpx==0.27.0
+
+recharts
