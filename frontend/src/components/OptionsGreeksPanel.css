@@ -1,0 +1,71 @@
+.panel-sub {
+  font-size: 13px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+
+.og-table-wrap, .pnl-table-wrap {
+  overflow-x: auto;
+  padding: 0 0 4px;
+}
+
+.og-table, .pnl-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  white-space: nowrap;
+}
+
+.og-table th, .pnl-table th {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-card);
+  position: sticky;
+  top: 0;
+}
+
+.og-table td, .pnl-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-mono);
+}
+
+.og-row:hover td, .pnl-table tr:hover td {
+  background: var(--bg-hover);
+}
+
+.og-row:last-child td, .pnl-table tr:last-child td {
+  border-bottom: none;
+}
+
+.sym-cell {
+  font-weight: 600;
+  color: var(--text-primary) !important;
+}
+
+.call-row { border-left: 2px solid var(--green-dim); }
+.put-row  { border-left: 2px solid var(--red-dim); }
+
+.section-divider {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  padding: 8px 14px 4px;
+  border-top: 1px solid var(--border);
+}
+
+/* colored text helpers used in this component */
+.text-green  { color: var(--green) !important; }
+.text-red    { color: var(--red) !important; }
+.text-amber  { color: var(--amber) !important; }
+.text-blue   { color: var(--blue) !important; }
+.text-cyan   { color: var(--cyan) !important; }
+.text-purple { color: var(--purple) !important; }
+.text-dim    { color: var(--text-dim) !important; }
+.text-secondary { color: var(--text-secondary) !important; }

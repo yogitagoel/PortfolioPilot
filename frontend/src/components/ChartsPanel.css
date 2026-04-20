@@ -1,0 +1,26 @@
+.chart-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: border-color var(--transition-base);
+}
+
+.chart-card:hover { border-color: var(--border-bright); }
+
+.chart-card-full {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+.chart-card-title {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #fff;
+  font-family: var(--font-mono);
+}
