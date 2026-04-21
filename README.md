@@ -31,6 +31,8 @@ Vite – Frontend build tool
 Axios – API communication  
 
 ## Project Structure
+
+```text
 Portfolio/
 │
 ├── backend/
@@ -49,27 +51,30 @@ Portfolio/
 ├── main.py
 ├── requirements.txt
 └── README.md
+```
+
 
 ## Installation & Setup
 
 Step 1: Clone the Repository
-
+```
 git clone <repository_url>  
 cd portfolio  
-
+```
 Step 2: Install Dependencies
-
+```
 pip install -r requirements.txt  
-
+```
 Step 3: Start Backend Server
-
+```
 uvicorn main:app --reload  
-
+```
 Step 4: Run Frontend
-
+```
+cd frontend
 npm install  
 npm run dev  
-
+```
 ## Usage / How to Use
 1. Open the web interface.
 2. Enter portfolio details including equities and options.
@@ -79,40 +84,52 @@ npm run dev
 6. The results are displayed on the dashboard for analysis.
 
 ## Algorithms Implemented
-
 ### Log Return Calculation
-Asset returns are calculated using logarithmic returns.
 
-r_t = ln(P_t / P_t-1)
+Asset returns are calculated using logarithmic returns:
+
+```math
+r_t = \ln\left(\frac{P_t}{P_{t-1}}\right)
+```
 
 Where:
 
-P_t = current price  
-P_t-1 = previous price  
+* ( P_t ) = current price
+* ( P_{t-1} ) = previous price
+
+---
 
 ### Portfolio Volatility
-Portfolio volatility measures the overall risk of a portfolio.
 
-σ_p = √(wᵀ Σ w)
+Portfolio volatility measures the overall risk of a portfolio:
+
+```math
+\sigma_p = \sqrt{w^T \Sigma w}
+```
 
 Where:
 
-w = asset weight vector  
-Σ = covariance matrix of asset returns  
+* ( w ) = asset weight vector
+* ( \Sigma ) = covariance matrix of asset returns
 
 This formula calculates the standard deviation of portfolio returns.
 
-### Black-Scholes Option Pricing
-Options are evaluated using the Black-Scholes pricing model.
+---
 
-C = S0 N(d1) − K e^(−rT) N(d2)
+### Black-Scholes Option Pricing
+
+Options are evaluated using the Black-Scholes pricing model:
+
+```math
+C = S_0 N(d_1) - K e^{-rT} N(d_2)
+```
 
 Where:
 
-S0 = current stock price  
-K = strike price  
-T = time to maturity  
-r = risk-free interest rate  
+* ( S_0 ) = current stock price
+* ( K ) = strike price
+* ( T ) = time to maturity
+* ( r ) = risk-free interest rate
 
 This model calculates the theoretical price of European call options.
 
